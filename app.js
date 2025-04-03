@@ -1,24 +1,21 @@
+
 const express = require('express');
 const app = express();
+const data = require('./db.json');
 
 app.use(express.json());
 
-let tasks = [
-    { id: 1, name: 'Task 1' },
-    { id: 2, name: 'Task 2' }
-];
-
-app.get('/tasks', (req, res) => {
-    res.json(tasks);
+app.get('/users', (req, res) => {
+  res.status(200).json(data.users);
 });
 
-app.get('/tasks/:id', (req, res) => {
-    const task = tasks.find(t => t.id === parseInt(req.params.id));
-    if (!task) return res.status(404).send('Task not found');
-    res.json(task);
+app.get('/users/:id', (req, res) => {
+  const user = data.users.find(u => u.id === parseInt(req.params.id, 10));
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404).json({ error: 'User not found' });
+  }
 });
-
-const PORT = 3000;
-app.listen(PORT, () => console.log(`API is running on port ${PORT}`));
 
 module.exports = app;

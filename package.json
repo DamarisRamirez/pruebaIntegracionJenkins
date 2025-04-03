@@ -1,11 +1,11 @@
 {
-  "name": "desafio_jenkins",
+  "name": "pruebaIntegracionJenkins",
   "version": "1.0.0",
-  "description": "Desafio Sistema de gestión de tareas",
+  "description": "Prueba CI",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "test": "jest --coverage --forceExit"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
