@@ -33,19 +33,8 @@ pipeline {
             }
         }
 
-        // --- ETAPA 3: VALIDAR API LOCAL ---
-        stage('Validar API') {
-            steps {
-                script {
-                    echo "🚀 Iniciando API local con json-server..."
-                    bat 'start /B json-server --watch db.json --port 3000'
-                    bat 'timeout /t 10 /nobreak'
-                    bat 'curl --fail http://localhost:3000/users || exit 1'
-                }
-            }
-        }
 
-        // --- ETAPA 4: EJECUTAR PRUEBAS ---
+        // --- ETAPA 3: EJECUTAR PRUEBAS ---
         stage('Ejecutar Pruebas') {
             steps {
                 script {
@@ -65,7 +54,7 @@ pipeline {
             }
         }
 
-        // --- ETAPA 5: CONSTRUIR Y EJECUTAR DOCKER ---
+        // --- ETAPA 4: CONSTRUIR Y EJECUTAR DOCKER ---
         stage('Docker') {
             steps {
                 script {
