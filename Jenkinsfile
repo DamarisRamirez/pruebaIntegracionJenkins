@@ -40,16 +40,10 @@ pipeline {
                 script {
                     try {
                         echo "🧪 Ejecutando pruebas unitarias..."
-                        bat 'npm test -- --coverage --reporters=jest-junit'
+                        bat 'npm test'
                     } catch (Exception e) {
                         error("❌ Error en la etapa de pruebas")
                     }
-                }
-            }
-            post {
-                always {
-                    junit 'junit.xml'
-                    archiveArtifacts artifacts: 'coverage/**/*', allowEmptyArchive: true
                 }
             }
         }
