@@ -1,11 +1,16 @@
 pipeline {
     agent any
 
+    environment {
+        NODE_VERSION = '18.16'
+    }
+
     stages {
         // --- ETAPA 1: CLONAR REPOSITORIO ---
-        stage('Clonar Código') {
+        stage('Clonar Repositorio') {
             steps {
-                checkout([ 
+                echo "** Clonando repositorio desde GitHub **"
+                checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/main']],
                     userRemoteConfigs: [[url: 'https://github.com/DamarisRamirez/pruebaIntegracionJenkins.git']]
@@ -16,18 +21,26 @@ pipeline {
         // --- ETAPA 2: INSTALAR DEPENDENCIAS ---
         stage('Instalar Dependencias') {
             steps {
-                bat 'npm install'
-                bat 'npm install jest-junit --save-dev' // Para reportes JUnit
+                script {
+                    try {
+                        echo "⚙️ Instalando dependencias..."
+                        bat 'npm install'
+                        bat 'npm install jest-junit --save-dev'
+                    } catch (Exception e) {
+                        error("❌ Error en la etapa de dependencias")
+                    }
+                }
             }
         }
 
-        // --- ETAPA 3: INICIAR Y VALIDAR API ---
+        // --- ETAPA 3: VALIDAR API LOCAL ---
         stage('Validar API') {
             steps {
                 script {
-                    bat 'start /B json-server --watch db.json --port 3000' // Inicia servidor
-                    bat 'timeout /t 10 /nobreak' // Espera 10 segundos
-                    bat 'curl --fail http://localhost:3000/users || exit 1' // Valida respuesta
+                    echo "🚀 Iniciando API local con json-server..."
+                    bat 'start /B json-server --watch db.json --port 3000'
+                    bat 'timeout /t 10 /nobreak'
+                    bat 'curl --fail http://localhost:3000/users || exit 1'
                 }
             }
         }
@@ -35,12 +48,31 @@ pipeline {
         // --- ETAPA 4: EJECUTAR PRUEBAS ---
         stage('Ejecutar Pruebas') {
             steps {
-                bat 'npm test -- --coverage --reporters=jest-junit' // Ejecuta pruebas con reportes
+                script {
+                    try {
+                        echo "🧪 Ejecutando pruebas unitarias..."
+                        bat 'npm test -- --coverage --reporters=jest-junit'
+                    } catch (Exception e) {
+                        error("❌ Error en la etapa de pruebas")
+                    }
+                }
             }
             post {
                 always {
-                    junit 'junit.xml' // Archiva resultados JUnit
-                    archiveArtifacts artifacts: 'coverage/**/*', allowEmptyArchive: true // Reporte de cobertura
+                    junit 'junit.xml'
+                    archiveArtifacts artifacts: 'coverage/**/*', allowEmptyArchive: true
+                }
+            }
+        }
+
+        // --- ETAPA 5: CONSTRUIR Y EJECUTAR DOCKER ---
+        stage('Docker') {
+            steps {
+                script {
+                    echo "🐳 Construyendo imagen Docker..."
+                    bat "docker build -t desafio_jenkins ."
+                    echo "▶️ Ejecutando contenedor Docker..."
+                    bat "docker run -d -p 3000:3000 desafio_jenkins"
                 }
             }
         }
@@ -48,7 +80,12 @@ pipeline {
 
     // --- POST-ACCIONES ---
     post {
+        success {
+            echo "✅ Pipeline completado con éxito"
+        }
+
         failure {
+            echo "❌ El pipeline ha fallado"
             emailext(
                 subject: "🚨 Pipeline Fallido - ${env.JOB_NAME}",
                 body: "Las pruebas fallaron o la API no responde. Detalles: ${env.BUILD_URL}",
