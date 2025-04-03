@@ -70,9 +70,9 @@ pipeline {
             steps {
                 script {
                     echo "🐳 Construyendo imagen Docker..."
-                    bat "docker build -t desafio_jenkins ."
+                    bat "docker build -t prueba_ci ."
                     echo "▶️ Ejecutando contenedor Docker..."
-                    bat "docker run -d -p 3000:3000 desafio_jenkins"
+                    bat "docker run -d -p 3000:3000 prueba_ci"
                 }
             }
         }
