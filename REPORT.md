@@ -49,7 +49,7 @@ git config --list
 
 ```bash
 # Agregar el repositorio remoto
-git remote add origin https://github.com/usuario/mi_proyecto.git
+git remote add origin https://github.com/DamarisRamirez/pruebaIntegracionJenkins
 
 # Verificar la conexión
 git remote -v
@@ -61,7 +61,7 @@ git push -u origin main
 
 ## 4. Creación de la API con Node.js y Express
 
-Se creó una API simple que expone las rutas `/tasks` y `/tasks/:id` en el puerto `3000`.
+Se creó una API simple que expone las rutas `/users` y `/users/:id` en el puerto `3000`.
 
 ### Comandos ejecutados:
 
@@ -72,50 +72,43 @@ npm init -y
 # Instalar Express
 npm install express
 
-# Instalar nodemon para desarrollo
-npm install --save-dev nodemon
 ```
 
-Se agregó el siguiente código en `server.js`:
+Se agregó el siguiente código en `app.js`:
 
 ```javascript
-const express = require("express");
+const express = require('express');
 const app = express();
-const port = 3000;
+const data = require('./db.json');
 
-// Middleware para parsear JSON
 app.use(express.json());
 
-// Datos simulados
-let tasks = [
-  { id: 1, name: "Tarea 1" },
-  { id: 2, name: "Tarea 2" },
-];
-
-// Ruta para obtener todas las tareas
-app.get("/tasks", (req, res) => {
-  res.json(tasks);
+app.get('/users', (req, res) => {
+  res.status(200).json(data.users);
 });
 
-// Ruta para obtener una tarea por ID
-app.get("/tasks/:id", (req, res) => {
-  const task = tasks.find((t) => t.id === parseInt(req.params.id));
-  if (task) {
-    res.json(task);
+app.get('/users/:id', (req, res) => {
+  const user = data.users.find(u => u.id === parseInt(req.params.id, 10));
+  if (user) {
+    res.status(200).json(user);
   } else {
-    res.status(404).json({ message: "Tarea no encontrada" });
+    res.status(404).json({ error: 'User not found' });
   }
 });
 
-// Iniciar el servidor
-app.listen(port, () => {
-  console.log(`API corriendo en http://localhost:${port}`);
-});
-```
+const PORT = 3000;
+
+app.listen(PORT, () =>
+  console.log(`Servidor corriendo en http://localhost:${PORT}`)
+);
+
+
+module.exports = app;
+
 
 ## 5. Creación del Dockerfile para la API
 
-Se creó un `Dockerfile` para construir una imagen que incluya la API y nodemon para desarrollo.
+Se creó un `Dockerfile` para construir una imagen que incluya la API  para desarrollo.
 
 ### Contenido del `Dockerfile`:
 
@@ -171,66 +164,5 @@ Para actualizar los cambios realizados en el repositorio local a GitHub, se ejec
 ### Contenido del `Jenkinsfile`:
 
 ```bash
-pipeline {
-    agent any
-    environment {
-        NODE_VERSION = '18.16'
-    }
 
-    stages {
-        stage('Clonar Repositorio') {
-            steps {
-                echo "** Clonando repositorio"
-               // git 'https://github.com/DamarisRamirez/pruebaIntegracionJenkins.git'
-                checkout scm
-            }
-
-        }
-
-        stage('Dependencias') {
-            steps {
-                script {
-                    try {
-                        echo "⚙️ Instalando dependencias..."
-                        bat 'npm install'
-                    } catch (Exception e) {
-                        error("❌ Error en la etapa de dependencias")
-                    }
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    try {
-                        echo "🧪 Ejecutando pruebas..."
-                        bat 'npm test'
-                    } catch (Exception e) {
-                        error("❌ Error en la etapa de Test")
-                    }
-                }
-            }
-        }
-
-        stage('Docker') {
-            steps {
-                script {
-                    //def imagen = 'desafio_jenkins:latest'
-                    bat "docker build -t desafio_jenkins ."
-                    bat "docker run -p 3000:3000 desafio_jenkins"
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Pipeline completado con éxito"
-        }
-        failure {
-            echo "❌ El pipeline ha fallado"
-        }
-    }
-}
 ```
