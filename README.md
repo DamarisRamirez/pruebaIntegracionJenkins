@@ -1,6 +1,7 @@
 # Proyecto API de Tareas
 
-Este proyecto muestra una API Node.js sencilla para la administración de tareas, integrada con Docker para contenerización y Jenkins para el pipeline de CI/CD.
+Este proyecto muestra una API Node.js para la gestión de usuarios que se integrará en un sistema más amplio de administración de
+recursos empresariales, integrada con Docker para contenerización y Jenkins para el pipeline de CI/CD.
 
 ## Características
 
