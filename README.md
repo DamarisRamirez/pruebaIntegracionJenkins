@@ -25,8 +25,8 @@ Este proyecto muestra una API Node.js sencilla para la administración de tareas
 2. resultadosJenkins.pdf: Contiene el resultado por consola arrojado por Jenkins al realizar el pipeline.
 
 ## Integrantes
-- Claudia Ortiz
-- Rene Parada
+- Rodrigo Aravena
+- Sebastian Huanca
 - Damaris Ramirez
 - Carolina Rojas
-- Henry Saldaña
+- Daniel Rojas
