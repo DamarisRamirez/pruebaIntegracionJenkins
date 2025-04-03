@@ -159,10 +159,5 @@ git push origin main
 
 ## 8. Jenkins
 
-Para actualizar los cambios realizados en el repositorio local a GitHub, se ejecutaron los siguientes pasos:
+Para actualizar los cambios realizados en el repositorio local a GitHub, se incluyó un jenkinfile
 
-### Contenido del `Jenkinsfile`:
-
-```bash
-
-```

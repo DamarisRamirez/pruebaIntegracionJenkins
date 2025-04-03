@@ -15,14 +15,11 @@ Este proyecto muestra una API Node.js sencilla para la administración de tareas
 
 ## Ejecución con Docker
 
-1. Construir la imagen: `docker build -t desafio_jenkins`
-2. Ejecutar el contenedor: `docker run -p 3000:3000 desafio_jenkins`
+1. Construir la imagen: `docker build -t prueba_ci`
+2. Ejecutar el contenedor: `docker run -p 3000:3000 prueba_ci`
 
 ## Reporte
 - En el archivo REPORT.md se encuentra la explicación de las configuraciones realizadas.
-- En la carpeta `documents` en la raiz del proyecto se encuentran 2 archivos:
-1. capturas.pdf: Contiene las capturas de pantalla del pipeline configurado en Jenkins.
-2. resultadosJenkins.pdf: Contiene el resultado por consola arrojado por Jenkins al realizar el pipeline.
 
 ## Integrantes
 - Rodrigo Aravena
