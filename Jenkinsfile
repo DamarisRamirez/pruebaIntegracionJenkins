@@ -6,6 +6,7 @@ pipeline {
     }
 
     stages {
+
         // --- ETAPA 1: CLONAR REPOSITORIO ---
         stage('Clonar Repositorio') {
             steps {
@@ -25,7 +26,6 @@ pipeline {
                     try {
                         echo "⚙️ Instalando dependencias..."
                         bat 'npm install'
-                        bat 'npm install jest-junit --save-dev'
                     } catch (Exception e) {
                         error("❌ Error en la etapa de dependencias")
                     }
@@ -33,14 +33,16 @@ pipeline {
             }
         }
 
-
         // --- ETAPA 3: EJECUTAR PRUEBAS ---
         stage('Ejecutar Pruebas') {
+            options {
+                timeout(time: 5, unit: 'MINUTES') // por si se queda pegado
+            }
             steps {
                 script {
                     try {
-                        echo "🧪 Ejecutando pruebas unitarias..."
-                        bat 'npm test'
+                        echo "🧪 Ejecutando pruebas unitarias con cobertura..."
+                        bat 'npm test -- --coverage --runInBand --ci --detectOpenHandles --forceExit'
                     } catch (Exception e) {
                         error("❌ Error en la etapa de pruebas")
                     }
@@ -58,22 +60,6 @@ pipeline {
                     bat "docker run -d -p 3000:3000 prueba_ci"
                 }
             }
-        }
-    }
-
-    // --- POST-ACCIONES ---
-    post {
-        success {
-            echo "✅ Pipeline completado con éxito"
-        }
-
-        failure {
-            echo "❌ El pipeline ha fallado"
-            emailext(
-                subject: "🚨 Pipeline Fallido - ${env.JOB_NAME}",
-                body: "Las pruebas fallaron o la API no responde. Detalles: ${env.BUILD_URL}",
-                to: 'equipo@techflow.com'
-            )
         }
     }
 }
