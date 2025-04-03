@@ -161,3 +161,16 @@ git push origin main
 
 Para actualizar los cambios realizados en el repositorio local a GitHub, se incluyó un jenkinfile
 
+## 9. Imagenes Pipeline
+
+![Clonacion de repositorio](image.png)
+
+![Clonacion de repositorio](image-1.png)
+
+![Instalacion dependencias](image-2.png)
+
+![Ejecución de tests](image-3.png)
+
+![construccion imagen docker](image-4.png)
+
+![ejecutando contenedor y success](image-5.png)
